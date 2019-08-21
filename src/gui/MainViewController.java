@@ -54,7 +54,7 @@ public class MainViewController implements Initializable {
 	}
 
 	// Método que adiciona a tela about no MainView
-	private synchronized <T> void loadView(String absoluteName, Consumer<T> initialAction) {
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -70,7 +70,8 @@ public class MainViewController implements Initializable {
 			mainVBox.getChildren().addAll(newVBox.getChildren());
 
 			T controller = loader.getController();
-			initialAction.accept(controller);
+			initializingAction.accept(controller);
+			
 
 		} catch (IOException e) {
 			Alerts.showAlert("IOException", "Error loading view", e.getMessage(), AlertType.ERROR);
