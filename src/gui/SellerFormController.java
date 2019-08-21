@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,6 +131,26 @@ public class SellerFormController implements Initializable {
 		}
 		depart.setName(txtName.getText());
 
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addErro("email", "Campo e-mail está vázio");
+		}
+		depart.setEmail(txtEmail.getText());
+
+		if (dpBirthDate.getValue() == null) {
+			exception.addErro("birthDate", "Campo birth date está vázio");
+
+		} else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			depart.setBirthDate(Date.from(instant));
+		}
+
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addErro("baseSalary", "Campo Base Salary está vázio");
+		}
+		depart.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+
+		depart.setDepartment(comboBoxDepartment.getValue());
+		
 		if (exception.getErros().size() > 0) {
 			throw exception;
 		}
@@ -189,9 +211,11 @@ public class SellerFormController implements Initializable {
 	private void setErrorMessage(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		}
+		//Usando operador ternário para reduzir a quantidade de ifs que seria usado
+		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
+		labelErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
+		labelErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
 	}
 
 	private void initializeComboBoxDepartment() {
